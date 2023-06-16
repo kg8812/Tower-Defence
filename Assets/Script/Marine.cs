@@ -8,7 +8,7 @@ public class Marine : Unit_Ally
     {
         IOnHit hit = target.GetComponent<IOnHit>();
 
-        hit?.OnHit(Atk,AtkType);
+        hit?.OnHit(Atk,IDmg);
         Debug.Log("АјАн");
     } 
 }

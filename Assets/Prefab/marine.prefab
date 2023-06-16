@@ -101,7 +101,7 @@ MonoBehaviour:
   curHp: 0
   unitType: 0
   atkType: 0
-  atk: 6
+  atk: 8
   def: 0
   atkSpeed: 2
   moveSpeed: 0

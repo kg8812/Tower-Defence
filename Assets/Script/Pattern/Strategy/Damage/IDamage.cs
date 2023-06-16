@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IOnHit
+public interface IDamage
 {
-    void OnHit(float dmg,IDamage type);
+    float CalculateDmgRatio(UnitType type);
 }

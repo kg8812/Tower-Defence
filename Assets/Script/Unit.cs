@@ -47,10 +47,14 @@ public abstract class Unit : MonoBehaviour,IOnHit
     public float MoveSpeed { get { return moveSpeed; } }
     public float AtkRange { get { return atkRange * 2; } }
 
-    public virtual void OnHit(float dmg, AtkType type)
+    public virtual void OnHit(float dmg, IDamage dmgType)
     {
+        float ratio = dmgType.CalculateDmgRatio(UnitType);
+
+        dmg *= ratio;
+
         CurHp -= dmg;
-        if (CurHp == 0) Destroy(gameObject);
+        if (CurHp == 0) Destroy(gameObject);       
     }
     
 }
