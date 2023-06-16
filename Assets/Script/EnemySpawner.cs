@@ -13,7 +13,9 @@ public class EnemySpawner : MonoBehaviour
     }
     void Spawn()
     {
-        Unit_Enemy enm = Instantiate(enemy, startPoint.transform.position, Quaternion.identity);
+        Unit_Enemy enm = FactoryManager.Instance.Enemy.CreateRandom();
+        enm.transform.position = startPoint.transform.position;
+        enm.transform.SetParent(transform);
         enm.wayPoints = wayPoints;
     }
 }

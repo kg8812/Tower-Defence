@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -9,10 +8,15 @@ public class TowerManager : MonoBehaviour
     RaycastHit2D hit;
     Vector2 worldPoint;
     [SerializeField] Tilemap tilemap;
-    [SerializeField] GameObject[] towerPrefabs;   
+    [SerializeField] Unit_Ally [] towerPrefabs;
 
+    readonly IDictionary<Vector3Int,Unit_Ally> towerDict = new Dictionary<Vector3Int,Unit_Ally>();
+
+    TileBase[] tiles;
     private void Start()
-    {                
+    {
+        BoundsInt bounds = tilemap.cellBounds;
+        tiles = tilemap.GetTilesBlock(bounds);
         foreach(Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
             tilemap.RemoveTileFlags(pos, TileFlags.LockColor);
@@ -32,8 +36,7 @@ public class TowerManager : MonoBehaviour
             }
 
             if (hit.collider != null)
-            {
-                
+            {               
                 
                 Vector3Int tpos = tilemap.WorldToCell(hit.point);
 
@@ -41,19 +44,22 @@ public class TowerManager : MonoBehaviour
 
                 Vector3 pos = tilemap.GetCellCenterWorld(tpos);
 
-                if (tile != null)
+                if (tile != null&& !towerDict.ContainsKey(tpos))
                 {
                     tilemap.SetTileFlags(tpos, TileFlags.None);
-                    CreateTower(pos);
+                    Unit_Ally tower = CreateTower(pos);
                     tilemap.SetColor(tpos, Color.red);
+                    towerDict.Add(tpos, tower);
                 }
             }
         }
     }
 
-    void CreateTower(Vector3 pos)
+    Unit_Ally CreateTower(Vector3 pos)
     {
         int rand = Random.Range(0,towerPrefabs.Length);
-        Instantiate(towerPrefabs[rand],pos,Quaternion.identity);
+        Unit_Ally tower = Instantiate(towerPrefabs[rand],pos,Quaternion.identity);
+        tower.transform.SetParent(transform);
+        return tower;
     }
 }
