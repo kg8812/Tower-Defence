@@ -2,11 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitRank
+{
+    Normal,
+    Rare,
+    Epic,
+    Unique
+}
 public abstract class Unit_Ally : Unit
 {
     float atkTime = 0;
     public IDamage IDmg { get; private set; }
-
+    [field:SerializeField] public UnitRank UnitRank { get; private set; }
     private void Start()
     {
         switch (AtkType)
@@ -46,5 +53,5 @@ public abstract class Unit_Ally : Unit
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, AtkRange + 1);
-    }  
+    }     
 }

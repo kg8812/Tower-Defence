@@ -54,7 +54,11 @@ public abstract class Unit : MonoBehaviour,IOnHit
         dmg *= ratio;
 
         CurHp -= dmg;
-        if (CurHp == 0) Destroy(gameObject);       
+        if (CurHp == 0)
+        {
+            GameManager.Instance.AddGold(100);
+            Destroy(gameObject);
+        }
     }
     
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,15 +9,13 @@ public class TowerManager : MonoBehaviour
     RaycastHit2D hit;
     Vector2 worldPoint;
     [SerializeField] Tilemap tilemap;
-    [SerializeField] Unit_Ally [] towerPrefabs;
+    readonly IDictionary<Vector3Int, Unit_Ally> towerDict = new Dictionary<Vector3Int, Unit_Ally>();
+    TowerCreator creator = new();
 
-    readonly IDictionary<Vector3Int,Unit_Ally> towerDict = new Dictionary<Vector3Int,Unit_Ally>();
+    Vector3Int? lastClickedTile = null;
 
-    TileBase[] tiles;
     private void Start()
-    {
-        BoundsInt bounds = tilemap.cellBounds;
-        tiles = tilemap.GetTilesBlock(bounds);
+    {        
         foreach(Vector3Int pos in tilemap.cellBounds.allPositionsWithin)
         {
             tilemap.RemoveTileFlags(pos, TileFlags.LockColor);
@@ -30,10 +29,7 @@ public class TowerManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             hit = Physics2D.Raycast(worldPoint, Vector2.down);
-            foreach (Vector3Int cellpos in tilemap.cellBounds.allPositionsWithin)
-            {
-                tilemap.SetColor(cellpos, Color.white);
-            }
+            ColorReset();
 
             if (hit.collider != null)
             {               
@@ -44,22 +40,53 @@ public class TowerManager : MonoBehaviour
 
                 Vector3 pos = tilemap.GetCellCenterWorld(tpos);
 
-                if (tile != null&& !towerDict.ContainsKey(tpos))
-                {
-                    tilemap.SetTileFlags(tpos, TileFlags.None);
-                    Unit_Ally tower = CreateTower(pos);
-                    tilemap.SetColor(tpos, Color.red);
-                    towerDict.Add(tpos, tower);
+                if (tile != null)
+                {                    
+                    if (lastClickedTile.HasValue && tpos == lastClickedTile.Value)
+                    {
+                        if (towerDict.ContainsKey(tpos))
+                        {
+
+                        }
+                        else
+                        {
+                            if (GameManager.Instance.Gold >= 100)
+                            {
+                                Unit_Ally tower = creator.CreateTower(UnitRank.Normal);
+                                tower.transform.position = pos;
+                                towerDict.Add(tpos, tower);
+                                tower.transform.SetParent(transform);                                
+                            }
+                        }                        
+                    }
+                    else
+                    {
+                        lastClickedTile = tpos;
+                        tilemap.SetColor(tpos, Color.red);
+                    }
                 }
+                else
+                {
+                    lastClickedTile = null;
+                }
+            }
+            else
+            {
+                lastClickedTile = null;
             }
         }
     }
 
-    Unit_Ally CreateTower(Vector3 pos)
+    
+
+    void ColorReset()
     {
-        int rand = Random.Range(0,towerPrefabs.Length);
-        Unit_Ally tower = Instantiate(towerPrefabs[rand],pos,Quaternion.identity);
-        tower.transform.SetParent(transform);
-        return tower;
+        foreach (Vector3Int cellpos in tilemap.cellBounds.allPositionsWithin)
+        {
+            tilemap.SetColor(cellpos, Color.white);
+        }
     }
+
+    
+    
 }
