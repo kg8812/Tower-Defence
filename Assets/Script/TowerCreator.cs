@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEditor.SceneTemplate;
 using UnityEngine;
 
-public class TowerCreator
+public class TowerCreator : IObserver
 {
-    [SerializeField] List<Unit_Ally> normalTowers = new();
-    [SerializeField] List<Unit_Ally> rareTowers = new();
-    [SerializeField] List<Unit_Ally> epicTowers = new();
-    [SerializeField] List<Unit_Ally> uniqueTowers = new();
-
+    List<Unit_Ally> normalTowers;
+    List<Unit_Ally> rareTowers;
+    List<Unit_Ally> epicTowers;
+    List<Unit_Ally> uniqueTowers;
+    
     public Unit_Ally RandomNormal
     {
         get
@@ -74,29 +74,38 @@ public class TowerCreator
                 tower = Object.Instantiate(RandomUnique);
 
                 break;
-        }        
-        
+        }
+
         GameManager.Instance.AddGold(-100);
         return tower;
     }
 
-    public void Upgrade(Unit_Ally tower)
+    public void Notify(Subject subject)
     {
+        TowerManager tm = subject.GetComponent<TowerManager>();
+        normalTowers = tm.NormalTowers;
+        rareTowers = tm.RareTowers;
+        epicTowers = tm.EpicTowers;
+        uniqueTowers = tm.UniqueTowers;
+    }
+
+    public void Upgrade(ref Unit_Ally tower)
+    {
+        if (tower.UnitRank == UnitRank.Unique) return;
+
+        Object.Destroy(tower.gameObject);
+
         switch (tower.UnitRank)
         {
             case UnitRank.Normal:
-                Object.Instantiate(RandomNormal);
+                tower = Object.Instantiate(RandomRare);
                 break;
             case UnitRank.Rare:
-                Object.Instantiate(RandomRare);
+                tower = Object.Instantiate(RandomEpic);
                 break;
             case UnitRank.Epic:
-                Object.Instantiate(RandomEpic);
-
-                break;
-            case UnitRank.Unique:
-                Object.Instantiate(RandomUnique);
-                break;
+                tower = Object.Instantiate(RandomUnique);
+                break;          
         }
     }
 

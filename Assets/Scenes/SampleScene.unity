@@ -465,10 +465,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 433174944}
-  normalTowers: []
-  rareTowers: []
-  epicTowers: []
-  uniqueTowers: []
+  <NormalTowers>k__BackingField:
+  - {fileID: 9057436848421442096, guid: 9a2f79182b903064f85d32b2a58134b6, type: 3}
+  <RareTowers>k__BackingField:
+  - {fileID: 9057436848421442096, guid: c6124fbb555081442a40810e2c48a8d4, type: 3}
+  <EpicTowers>k__BackingField:
+  - {fileID: 9057436848421442096, guid: 7499b9952d66c8e4fbdf28170bcd3aa4, type: 3}
+  <UniqueTowers>k__BackingField:
+  - {fileID: 9057436848421442096, guid: 7d8aacc1a5f89aa4bb1bb30b43801e63, type: 3}
 --- !u!4 &351418852
 Transform:
   m_ObjectHideFlags: 0
